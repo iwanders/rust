@@ -96,7 +96,7 @@ pub fn parse_cfgspecs(cfgspecs: Vec<String>) -> FxHashSet<(String, Option<String
                     ($reason: expr) => {
                         early_error(
                             ErrorOutputType::default(),
-                            &format!(concat!("invalid `--cfg` argument: `{}` (", $reason, ")"), s),
+                            &format!("invalid `--cfg` argument: `{}` ({})", s, $reason),
                         );
                     };
                 }
@@ -124,10 +124,7 @@ pub fn parse_cfgspecs(cfgspecs: Vec<String>) -> FxHashSet<(String, Option<String
                     Err(errs) => errs.into_iter().for_each(|mut err| err.cancel()),
                 }
 
-                error!(concat!(
-                    r#"expected `key` or `key="value"`, ensure escaping is appropriate"#,
-                    r#" for your shell, try 'key="value"' or key=\"value\""#
-                ));
+                error!(format!("expected `key` or `key=\"value\"`, got `{}`", s));
             })
             .collect::<CrateConfig>();
         cfg.into_iter().map(|(a, b)| (a.to_string(), b.map(|b| b.to_string()))).collect()
